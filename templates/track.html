@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Track Your Order | Jan Aushadhi Pharmacy Portal{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1100px; margin-top: 3rem;">
+    <!-- Title Section -->
+    <div class="section-title-wrapper" style="margin-top: 1rem; margin-bottom: 2rem;">
+        <h2>Track Your Order</h2>
+        <p>Enter your Order ID to see the real-time status of your medical supplies.</p>
+    </div>
+
+    <!-- Search Card (Image 3 Mockup) -->
+    <div class="tracking-search-card">
+        <form action="/track" method="GET">
+            <div class="tracking-search-bar-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="order_id" required placeholder="Example: JAK-882910-24" value="{{ query_code or '' }}" class="form-group" style="margin-bottom: 0; width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 12px 12px 40px; font-size: 0.95rem;">
+                <button type="submit" class="btn-track-submit" style="background: var(--primary-blue); color: white; border: none; padding: 10px 24px; font-weight: 600; border-radius: 6px; cursor: pointer;">Track Order</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Display Flask Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="background: hsl(350, 75%, 95%); border-left: 4px solid hsl(350, 75%, 50%); color: hsl(350, 75%, 30%); padding: 1rem; border-radius: var(--border-radius-sm); margin-bottom: 2rem; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if order %}
+        <!-- Two Column Grid for Order Details -->
+        <div class="tracking-details-layout">
+            <!-- Left Column: Status, Timeline, Items -->
+            <div>
+                <!-- Status Box -->
+                <div class="tracking-timeline-card" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; background: white; margin-bottom: 24px;">
+                    <div class="tracking-header-info" style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; align-items: center;">
+                        <div>
+                            <span class="tracking-badge-transit" style="background: #dcfce7; color: #15803d; font-weight: 700; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; text-transform: uppercase;">
+                                {% if order.status == 'Delivered' %}Delivered{% else %}In Transit{% endif %}
+                            </span>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 8px; color: var(--text-dark);">Order ID: JAK-882910-{{ order.id }}</h3>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Estimated Delivery</span>
+                            <strong style="font-size: 1rem; color: var(--text-dark);">Oct 24, 2024</strong>
+                        </div>
+                    </div>
+
+                    <!-- Horizontal Timeline Stepper -->
+                    <div class="timeline-steps-wrapper" style="display: flex; justify-content: space-between; align-items: center; position: relative; margin: 30px 0;">
+                        <!-- Timeline Background Line -->
+                        <div class="timeline-line-background" style="position: absolute; top: 16px; left: 5%; right: 5%; height: 3px; background: #cbd5e1; z-index: 1;"></div>
+                        <!-- Timeline Progress Line -->
+                        <div class="timeline-line-progress" style="position: absolute; top: 16px; left: 5%; height: 3px; background: var(--accent-green); z-index: 2; 
+                            width: {% if order.status == 'Pending' %}20%{% elif order.status == 'Processing' %}45%{% elif order.status == 'Shipped' %}70%{% else %}90%{% endif %};"></div>
+
+                        <!-- Step 1: Placed -->
+                        <div class="timeline-step completed" style="display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 3; width: 18%;">
+                            <div class="timeline-step-icon" style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent-green); border: 2px solid var(--accent-green); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;"><i class="fa-solid fa-check"></i></div>
+                            <span class="timeline-step-label" style="font-size: 0.8rem; font-weight: 600; margin-top: 8px; color: var(--text-dark);">Placed</span>
+                            <span class="timeline-step-time" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">Oct 20, 08:12 AM</span>
+                        </div>
+
+                        <!-- Step 2: Processing -->
+                        <div class="timeline-step {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}completed{% endif %}" style="display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 3; width: 18%;">
+                            <div class="timeline-step-icon" style="width: 32px; height: 32px; border-radius: 50%; 
+                                background: {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}var(--accent-green){% else %}white{% endif %}; 
+                                border: 2px solid {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}var(--accent-green){% else %}#cbd5e1{% endif %}; 
+                                color: {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}white{% else %}var(--text-muted){% endif %}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                                {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}<i class="fa-solid fa-check"></i>{% else %}<i class="fa-solid fa-gear"></i>{% endif %}
+                            </div>
+                            <span class="timeline-step-label" style="font-size: 0.8rem; font-weight: 600; margin-top: 8px; color: var(--text-dark);">Processing</span>
+                            <span class="timeline-step-time" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">
+                                {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}Oct 20, 02:45 PM{% else %}Pending{% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Step 3: Shipped -->
+                        <div class="timeline-step {% if order.status in ['Shipped', 'Delivered'] %}completed{% endif %}" style="display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 3; width: 18%;">
+                            <div class="timeline-step-icon" style="width: 32px; height: 32px; border-radius: 50%; 
+                                background: {% if order.status in ['Shipped', 'Delivered'] %}var(--accent-green){% else %}white{% endif %}; 
+                                border: 2px solid {% if order.status in ['Shipped', 'Delivered'] %}var(--accent-green){% else %}#cbd5e1{% endif %}; 
+                                color: {% if order.status in ['Shipped', 'Delivered'] %}white{% else %}var(--text-muted){% endif %}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                                {% if order.status in ['Shipped', 'Delivered'] %}<i class="fa-solid fa-truck-moving"></i>{% else %}<i class="fa-solid fa-truck-fast"></i>{% endif %}
+                            </div>
+                            <span class="timeline-step-label" style="font-size: 0.8rem; font-weight: 600; margin-top: 8px; color: var(--text-dark);">Shipped</span>
+                            <span class="timeline-step-time" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">
+                                {% if order.status in ['Shipped', 'Delivered'] %}Oct 21, 11:30 AM{% else %}Pending{% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Step 4: Out for Delivery -->
+                        <div class="timeline-step {% if order.status == 'Delivered' %}completed{% endif %}" style="display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 3; width: 18%;">
+                            <div class="timeline-step-icon" style="width: 32px; height: 32px; border-radius: 50%; 
+                                background: {% if order.status == 'Delivered' %}var(--accent-green){% else %}white{% endif %}; 
+                                border: 2px solid {% if order.status == 'Delivered' %}var(--accent-green){% else %}#cbd5e1{% endif %}; 
+                                color: {% if order.status == 'Delivered' %}white{% else %}var(--text-muted){% endif %}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                                <i class="fa-solid fa-motorcycle"></i>
+                            </div>
+                            <span class="timeline-step-label" style="font-size: 0.8rem; font-weight: 600; margin-top: 8px; color: var(--text-dark);">Out for Delivery</span>
+                            <span class="timeline-step-time" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">Pending</span>
+                        </div>
+
+                        <!-- Step 5: Delivered -->
+                        <div class="timeline-step {% if order.status == 'Delivered' %}completed{% endif %}" style="display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 3; width: 18%;">
+                            <div class="timeline-step-icon" style="width: 32px; height: 32px; border-radius: 50%; 
+                                background: {% if order.status == 'Delivered' %}var(--accent-green){% else %}white{% endif %}; 
+                                border: 2px solid {% if order.status == 'Delivered' %}var(--accent-green){% else %}#cbd5e1{% endif %}; 
+                                color: {% if order.status == 'Delivered' %}white{% else %}var(--text-muted){% endif %}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                                <i class="fa-solid fa-house-chimney-medical"></i>
+                            </div>
+                            <span class="timeline-step-label" style="font-size: 0.8rem; font-weight: 600; margin-top: 8px; color: var(--text-dark);">Delivered</span>
+                            <span class="timeline-step-time" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">Pending</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items in your Order Box -->
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+                    <h3 style="font-size: 1.1rem; padding: 18px 24px; background: #eef4fc; border-bottom: 1px solid #cbd5e1; font-weight: 700; color: var(--text-dark);">Items in your Order</h3>
+                    
+                    <div style="padding: 24px; display: flex; flex-direction: column; gap: 15px;">
+                        {% for item in items %}
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    {% if item.image_url %}
+                                        <img src="{{ item.image_url }}" alt="{{ item.name }}" style="width: 48px; height: 48px; border-radius: 6px; object-fit: cover; border: 1px solid #cbd5e1;">
+                                    {% else %}
+                                        <div style="width: 48px; height: 48px; border-radius: 6px; background: #e2e8f0; color: var(--primary-blue); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+                                    {% endif %}
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-dark);">{{ item.name }}</h4>
+                                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Generic Name: {{ item.generic_name }}</p>
+                                        <p style="font-size: 0.8rem; color: var(--text-muted);">Quantity: {{ item.quantity }} strips ({{ item.quantity * 10 }} tabs)</p>
+                                    </div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-dark);">₹{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                            </div>
+                        {% endfor %}
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; font-weight: 700; font-size: 1.05rem;">
+                            <span>Order Total</span>
+                            <span style="color: var(--primary-blue); font-size: 1.15rem;">₹{{ "%.2f"|format(order.total_amount) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Shipping Info, Support Box, Fulfilled By -->
+            <div>
+                <!-- Delivery Address Box -->
+                <div style="background: white; border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+                    <h3 style="font-size: 1rem; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: var(--text-dark);">
+                        <i class="fa-solid fa-map-location-dot" style="color: var(--primary-blue);"></i> Delivery Address
+                    </h3>
+                    <p style="font-weight: 700; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 5px;">{{ order.customer_name }}</p>
+                    <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin-bottom: 12px;">{{ order.shipping_address }}</p>
+                    <p style="font-size: 0.85rem; color: #475569; margin-bottom: 15px;"><strong>Phone:</strong> {{ order.phone }}</p>
+                    
+                    <div style="border-top: 1px solid #e2e8f0; padding-top: 15px; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #475569;">
+                        <i class="fa-solid fa-receipt" style="color: var(--primary-blue); font-size: 1rem;"></i>
+                        <span>Payment Method: <strong>{{ order.payment_method }}</strong></span>
+                    </div>
+                </div>
+
+                <!-- Support Box -->
+                <div style="background: var(--primary-blue); color: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;">
+                    <div style="position: absolute; right: -15px; bottom: -15px; opacity: 0.08; font-size: 7rem; color: white;"><i class="fa-solid fa-question-circle"></i></div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: white;">Need help with this order?</h3>
+                    <p style="font-size: 0.8rem; line-height: 1.5; opacity: 0.9; margin-bottom: 20px;">Our support team is available 24/7 to assist with delivery issues, damaged goods, or any other queries.</p>
+                    <a href="/contact" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: white; color: var(--primary-blue); font-weight: 600; padding: 10px 20px; border-radius: 6px; font-size: 0.85rem; width: 100%;">
+                        <span>Contact Support</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Fulfilled By Box -->
+                <div class="fulfilled-by-card" style="background: #eef4fc; border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; gap: 15px; border: 1px solid #d3e3fd; box-shadow: var(--shadow-sm);">
+                    <div class="fulfilled-icon" style="width: 44px; height: 44px; border-radius: 10px; background: #86efac; color: #14532d; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-store"></i></div>
+                    <div>
+                        <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; display: block;">Fulfilled By</span>
+                        <strong style="font-size: 0.9rem; color: var(--text-dark);">Jan Aushadhi Store #412</strong>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Gurugram Center</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% elif query_code %}
+        <!-- Order Not Found placeholder state -->
+        <div style="text-align: center; padding: 4rem 2rem; background: white; border-radius: 12px; border: 1px dashed #cbd5e1; box-shadow: var(--shadow-sm);">
+            <i class="fa-solid fa-circle-xmark" style="font-size: 3.5rem; color: var(--accent-red); margin-bottom: 1.5rem;"></i>
+            <h3>Order Not Found</h3>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">We couldn't find any order with code <strong>{{ query_code }}</strong>. Please check your order reference and try again.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

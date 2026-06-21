@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us | Jan Aushadhi Pharmacy Portal{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 3rem;">
+    <div class="section-title-wrapper" style="margin-top: 1rem; margin-bottom: 2rem;">
+        <h2>Contact Jan Aushadhi</h2>
+        <p>Do you have inquiries regarding generic formulations, order tracking, or partner opportunities? Get in touch with our helpdesk.</p>
+    </div>
+    
+    <div class="contact-grid">
+        <!-- Contact Information Card -->
+        <div class="contact-info-card">
+            <h3><i class="fa-solid fa-address-book" style="color: var(--primary-teal);"></i> Helpdesk Info</h3>
+            
+            <div class="contact-item">
+                <div class="contact-item-icon">
+                    <i class="fa-solid fa-phone-volume"></i>
+                </div>
+                <div class="contact-item-details">
+                    <h4>Toll-Free Support Line</h4>
+                    <p>1800-180-8080</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Available Monday to Saturday (9:00 AM - 9:00 PM) , Sunday (9:00 AM - 1:00 PM)</p>
+                </div>
+            </div>
+            
+            <div class="contact-item">
+                <div class="contact-item-icon">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                </div>
+                <div class="contact-item-details">
+                    <h4>Email Support</h4>
+                    <p>support@janaushadhi.gov.in</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Average response time: 24-48 working hours</p>
+                </div>
+            </div>
+            
+            <div class="contact-item">
+                <div class="contact-item-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div class="contact-item-details">
+                    <h4>Operational Timings</h4>
+                    <p>Kendra Timings: 9:00 AM - 8:00 PM</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Open all 7 days of the week</p>
+                </div>
+            </div>
+            
+            <div>
+                <h4 style="margin-bottom: 0.8rem; font-size: 1rem;"><i class="fa-solid fa-map-location-dot"></i> Principal Office</h4>
+                <div class="map-placeholder">
+                    <i class="fa-solid fa-map-pin" style="margin-right: 8px; color: hsl(350, 75%, 50%);"></i> Prthan Mantri Jan Aushadhi Kendra Near MahaSagar Travels, Moti Tanki Chock Rajkot, Gujarat
+                </div>
+            </div>
+        </div>
+        
+        <!-- Feedback Form Panel -->
+        <div class="checkout-card" style="box-shadow: var(--shadow-sm);">
+            <h3><i class="fa-solid fa-message" style="color: var(--primary-teal);"></i> Submit Feedback / Inquiry</h3>
+            
+            <form action="/contact" method="POST" style="margin-top: 1.5rem;" id="contact-feedback-form">
+                <div class="form-group">
+                    <label for="contact-name">Your Full Name *</label>
+                    <input type="text" id="contact-name" name="name" required placeholder="e.g. Rahul Sharma">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact-email">Email Address *</label>
+                    <input type="email" id="contact-email" name="email" required placeholder="e.g. rahul@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact-subject">Subject *</label>
+                    <select id="contact-subject" name="subject" required>
+                        <option value="" disabled selected>Select an inquiry area...</option>
+                        <option value="Medicine Availability">Medicine Availability Inquiry</option>
+                        <option value="Order Tracking">Order Status & Tracking</option>
+                        <option value="Kendra Partnership">Establish Jan Aushadhi Kendra</option>
+                        <option value="Quality Concern">Medicine Quality & Safety Concern</option>
+                        <option value="Other">Other Miscellaneous Inquiry</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label for="contact-message">Detailed Message *</label>
+                    <textarea id="contact-message" name="message" rows="5" required placeholder="Please describe your query in detail..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn-checkout" style="width: 100%;">
+                    <i class="fa-solid fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

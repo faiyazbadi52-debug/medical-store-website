@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout | Jan Aushadhi Pharmacy Portal{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 3rem;">
+    {% if success %}
+        <!-- Order success display -->
+        <div class="order-success-container animate-fade-in">
+            <div class="success-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h2>Order Placed Successfully!</h2>
+            <p>Thank you for choosing Jan Aushadhi. Your order <strong>#JA-2026-{{ order_id }}</strong> has been registered. You saved ₹{{ "%.2f"|format(savings) }} by choosing generic formulations!</p>
+            
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 1.5rem; text-align: left; margin-bottom: 2rem;">
+                <h4 style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-receipt"></i> Order Receipt</h4>
+                <p><strong>Deliver To:</strong> {{ name }}</p>
+                <p><strong>Phone:</strong> {{ phone }}</p>
+                <p><strong>Shipping Address:</strong> {{ address }}</p>
+                <p><strong>Payment Mode:</strong> {{ payment_method }}</p>
+                <p style="margin-top: 0.5rem; border-top: 1px dashed var(--border-color); padding-top: 0.5rem; font-size: 1.1rem; font-weight: 700;">
+                    Amount Paid/Due: <span style="color: var(--primary-teal)">₹{{ "%.2f"|format(total) }}</span>
+                </p>
+            </div>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <a href="/catalog" class="btn-login">Shop More Medicines</a>
+                <a href="/" class="btn-logout">Return Home</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="section-title-wrapper" style="margin-top: 1rem; margin-bottom: 2rem;">
+            <h2>Secure Checkout</h2>
+            <p>Complete your shipping information and verify payment mode to finalize the purchase of your medicines.</p>
+        </div>
+        
+        <form action="/checkout" method="POST" id="checkout-payment-form">
+            <div class="checkout-layout">
+                <!-- Left panel: Cart Summary, Shipping Details, and Payment -->
+                <div class="checkout-left-col">
+                    <!-- Cart Summary Box -->
+                    <div class="checkout-card">
+                        <h3><i class="fa-solid fa-cart-shopping"></i> Cart Summary <span class="cart-count-badge" style="background: #4ade80; color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; margin-left: 10px;">{{ items|length }} Items</span></h3>
+                        
+                        <div class="checkout-items-summary" style="display: flex; flex-direction: column; gap: 15px; margin-top: 1rem;">
+                            {% for item in items %}
+                                <div class="checkout-item-row" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 12px;" id="item-row-{{ item.id }}">
+                                    <div style="display: flex; align-items: center; gap: 15px; flex-grow: 1;">
+                                        {% if item.image_url %}
+                                            <img src="{{ item.image_url }}" alt="{{ item.name }}" class="checkout-item-thumb" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                        {% else %}
+                                            <div class="checkout-item-thumb" style="width: 50px; height: 50px; border-radius: 8px; background: #eef4fc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: var(--primary-blue); font-size: 1.2rem;"><i class="fa-solid fa-pills"></i></div>
+                                        {% endif %}
+                                        <div>
+                                            <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark);">{{ item.name }}</h4>
+                                            <p style="font-size: 0.8rem; color: var(--text-muted);">{{ item.dosage_form }} (10 Tablets)</p>
+                                            
+                                            <!-- Quantity Modifier and Remove -->
+                                            <div style="display: flex; align-items: center; gap: 15px; margin-top: 5px;">
+                                                <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; background: white; font-size: 0.8rem;">
+                                                    <button type="button" class="btn-qty-mod" onclick="updateCheckoutQty({{ item.id }}, -1)" style="padding: 2px 8px; background: #f8fafc; border: none; cursor: pointer; font-weight: bold;">-</button>
+                                                    <span id="qty-val-{{ item.id }}" style="padding: 2px 8px; font-weight: 600;">{{ "%02d"|format(item.quantity) }}</span>
+                                                    <button type="button" class="btn-qty-mod" onclick="updateCheckoutQty({{ item.id }}, 1)" style="padding: 2px 8px; background: #f8fafc; border: none; cursor: pointer; font-weight: bold;">+</button>
+                                                </div>
+                                                <a href="javascript:void(0);" onclick="deleteCheckoutItem({{ item.id }})" style="font-size: 0.8rem; color: var(--accent-red); font-weight: 500; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-trash-can"></i> Remove</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="checkout-item-price" style="text-align: right;">
+                                        <span class="current" style="font-weight: 700; color: var(--text-dark); display: block;">₹{{ "%.2f"|format(item.price) }}</span>
+                                        <span class="old" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: line-through;">₹{{ "%.2f"|format(item.price * 5) }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Shipping details box -->
+                    <div class="checkout-card">
+                        <h3><i class="fa-solid fa-truck-fast"></i> Shipping & Contact Details</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" value="{{ user.name if user else '' }}" required placeholder="Rajesh Kumar">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Mobile Number</label>
+                                <input type="tel" id="phone" name="phone" value="{{ user.phone if user else '' }}" required placeholder="+91 98765 43210" pattern="[0-9+ \-]{10,15}">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Delivery Address</label>
+                            <textarea id="address" name="address" rows="3" required placeholder="House No. 42, Green Valley Apartments, Sector 15, Rohini, New Delhi - 110085">{{ user.address if user else '' }}</textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pincode">Pincode</label>
+                                <input type="text" id="pincode" name="pincode" required placeholder="110085" pattern="[0-9]{6}">
+                            </div>
+                            <div class="form-group">
+                                <label for="landmark">Locality / Landmark</label>
+                                <input type="text" id="landmark" name="landmark" placeholder="Near Apollo Clinic">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method box -->
+                    <div class="checkout-card">
+                        <h3><i class="fa-solid fa-wallet"></i> Payment Method</h3>
+                        
+                        <!-- UPI option -->
+                        <div class="payment-option-card active" id="method-upi-card" onclick="selectPaymentMethod('upi')">
+                            <input type="radio" name="payment_method" value="UPI (GPay, PhonePe, Paytm)" checked id="radio-upi" style="accent-color: var(--primary-blue);">
+                            <div class="payment-option-info" style="margin-left: 10px;">
+                                <h4>UPI (GPay, PhonePe, Paytm)</h4>
+                                <p>Instant payment using your UPI ID</p>
+                            </div>
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                        </div>
+                        
+                        <!-- Card option -->
+                        <div class="payment-option-card" id="method-card-card" onclick="selectPaymentMethod('card')">
+                            <input type="radio" name="payment_method" value="Credit/Debit Card" id="radio-card" style="accent-color: var(--primary-blue);">
+                            <div class="payment-option-info" style="margin-left: 10px;">
+                                <h4>Credit / Debit Card</h4>
+                                <p>All major Indian and International cards</p>
+                            </div>
+                            <i class="fa-solid fa-credit-card"></i>
+                        </div>
+                        
+                        <!-- COD option -->
+                        <div class="payment-option-card" id="method-cod-card" onclick="selectPaymentMethod('cod')">
+                            <input type="radio" name="payment_method" value="Cash on Delivery" id="radio-cod" style="accent-color: var(--primary-blue);">
+                            <div class="payment-option-info" style="margin-left: 10px;">
+                                <h4>Cash on Delivery</h4>
+                                <p>Pay when you receive your medicines</p>
+                            </div>
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Order Summary, Trust Badges, Patient Note -->
+                <div class="checkout-right-col">
+                    <div class="summary-box">
+                        <h3 class="summary-heading">Order Summary</h3>
+                        
+                        <div class="summary-line">
+                            <span>Subtotal ({{ items|length }} items)</span>
+                            <span id="summary-subtotal">₹{{ "%.2f"|format(subtotal) }}</span>
+                        </div>
+                        <div class="summary-line">
+                            <span>Shipping Fee</span>
+                            <span style="color: var(--accent-green); font-weight: 600;">FREE</span>
+                        </div>
+                        <div class="summary-line" style="margin-bottom: 12px;">
+                            <span>Service Tax (GST)</span>
+                            <span>₹0.00</span>
+                        </div>
+                        
+                        <div class="summary-line savings" style="background: #dcfce7; color: #15803d; padding: 8px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; margin-bottom: 15px;">
+                            <span>Total Jan Aushadhi Savings</span>
+                            <span id="summary-savings">₹{{ "%.2f"|format(savings) }}</span>
+                        </div>
+                        
+                        <div class="summary-line total" style="border-top: 1px solid #cbd5e1; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <span style="font-weight: 600; font-size: 1rem;">Total Payable</span>
+                            <span id="summary-total" style="font-size: 1.6rem; font-weight: 800; color: var(--primary-blue);">₹{{ "%.2f"|format(total) }}</span>
+                        </div>
+                        
+                        <button type="submit" class="btn-confirm-order" style="background: var(--primary-blue); color: white; border-radius: 8px; padding: 12px; font-weight: 600; border: none; width: 100%; cursor: pointer;">Confirm Order</button>
+                        
+                        <!-- Trust Badges Grid -->
+                        <div class="trust-badges-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                            <div class="trust-badge-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">
+                                <i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i>
+                                <span>100% Genuine Medicines</span>
+                            </div>
+                            <div class="trust-badge-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">
+                                <i class="fa-solid fa-shield-halved" style="color: var(--accent-green);"></i>
+                                <span>Secure SSL Payment</span>
+                            </div>
+                            <div class="trust-badge-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">
+                                <i class="fa-solid fa-prescription-bottle-medical" style="color: var(--accent-green);"></i>
+                                <span>Quality Certified Labs</span>
+                            </div>
+                            <div class="trust-badge-item" style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">
+                                <i class="fa-solid fa-headset" style="color: var(--accent-green);"></i>
+                                <span>24/7 Health Support</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Note for Patients -->
+                        <div class="note-box" style="margin-top: 20px; padding: 12px; border-radius: 8px; border: 1px dashed #bfdbfe; background: #eff6ff; font-size: 0.75rem; line-height: 1.4;">
+                            <h5 style="color: var(--primary-blue); font-weight: 700; margin-bottom: 4px;">Note for Patients</h5>
+                            <p style="color: #1e3a8a;">Please keep your prescription ready for verification by the pharmacist during delivery for scheduled drugs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+</div>
+
+<!-- Checkout JS handlers inline override -->
+<script>
+    // Payment method selection card updates
+    function selectPaymentMethod(method) {
+        const upiCard = document.getElementById('method-upi-card');
+        const cardCard = document.getElementById('method-card-card');
+        const codCard = document.getElementById('method-cod-card');
+        
+        const radioUpi = document.getElementById('radio-upi');
+        const radioCard = document.getElementById('radio-card');
+        const radioCod = document.getElementById('radio-cod');
+        
+        // Clear all active classes
+        [upiCard, cardCard, codCard].forEach(c => { if(c) c.classList.remove('active'); });
+        
+        if (method === 'upi' && upiCard) {
+            upiCard.classList.add('active');
+            radioUpi.checked = true;
+        } else if (method === 'card' && cardCard) {
+            cardCard.classList.add('active');
+            radioCard.checked = true;
+        } else if (method === 'cod' && codCard) {
+            codCard.classList.add('active');
+            radioCod.checked = true;
+        }
+    }
+
+    // Dynamic Checkout AJAX handlers
+    async function updateCheckoutQty(itemId, change) {
+        const qtySpan = document.getElementById(`qty-val-${itemId}`);
+        if (!qtySpan) return;
+        
+        let currentQty = parseInt(qtySpan.textContent);
+        let newQty = currentQty + change;
+        if (newQty < 1) return;
+        
+        try {
+            const response = await fetch('/api/cart/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ item_id: itemId, quantity: newQty })
+            });
+            
+            const data = await response.json();
+            if (response.ok && data.success) {
+                // Update badge and text
+                qtySpan.textContent = String(newQty).padStart(2, '0');
+                
+                // Reload to sync state and total pricing
+                window.location.reload();
+            } else {
+                showToast(data.error || 'Failed to update quantity', 'error');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Error connecting to server', 'error');
+        }
+    }
+
+    async function deleteCheckoutItem(itemId) {
+        if (!confirm('Are you sure you want to remove this item?')) return;
+        
+        try {
+            const response = await fetch('/api/cart/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ item_id: itemId })
+            });
+            
+            const data = await response.json();
+            if (response.ok && data.success) {
+                const row = document.getElementById(`item-row-${itemId}`);
+                if (row) row.remove();
+                
+                // Reload to sync state and total pricing
+                window.location.reload();
+            } else {
+                showToast(data.error || 'Failed to remove item', 'error');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Error connecting to server', 'error');
+        }
+    }
+
+    function showToast(msg, type='info') {
+        const toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) return;
+        
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-triangle-exclamation' : 'fa-info-circle'}"></i> <span>${msg}</span>`;
+        toastContainer.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3000);
+    }
+</script>
+{% endblock %}

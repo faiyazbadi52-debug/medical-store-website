@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Jan Aushadhi Pharmacy Portal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container hero-grid">
+        <div class="hero-content-wrapper">
+            <span class="hero-badge"><i class="fa-solid fa-sparkles"></i> 100% Quality Assurance</span>
+            <h1>High Quality Medicines.<br><span style="color: var(--accent-emerald);">90% Lower Prices.</span></h1>
+            <p>Make healthcare affordable for your family. PMBJP provides top-tier generic medicines that match branded options in efficacy, dosage, and quality, at a fraction of the cost.</p>
+            
+            <form action="/catalog" method="GET" class="search-bar-hero">
+                <input type="text" name="search" placeholder="Search medicines by generic name or brand..." required autocomplete="off">
+                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            </form>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <h3>9,500+</h3>
+                    <p>Kendras Across India</p>
+                </div>
+                <div class="stat-item">
+                    <h3>90%</h3>
+                    <p>Maximum Cost Savings</p>
+                </div>
+                <div class="stat-item">
+                    <h3>1,800+</h3>
+                    <p>Generic Medicines Available</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-image-wrapper">
+            <div class="hero-image-bg"></div>
+            <!-- Generating image content using inline design representation -->
+            <img src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=600&auto=format&fit=crop" alt="Jan Aushadhi Medicines" class="hero-image">
+        </div>
+    </div>
+</section>
+
+<!-- Savings Widget -->
+<section class="container">
+    <div class="savings-widget">
+        <div>
+            <h2>Generic vs. Branded Medicines</h2>
+            <p>Generic medicines have the exact same active ingredients, dosage, usage, and strength as branded medicines. The only difference is the price. Since generic manufacturers do not bear the cost of drug discovery, trials, and massive advertising, they pass these savings directly to you!</p>
+            <a href="/catalog" class="btn-login" style="display: inline-block; background: white; color: var(--primary-teal); box-shadow: none;">Browse Generic Catalog</a>
+        </div>
+        <div class="savings-compare">
+            <h3 style="color: white; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;"><i class="fa-solid fa-scale-balanced"></i> Savings Comparison</h3>
+            
+            <div class="compare-row">
+                <span class="compare-label">Atorvastatin 10mg (Heart)</span>
+                <div>
+                    <span class="compare-val cross">₹190.00</span>
+                    <span class="compare-val save">₹38.00 (Save 80%)</span>
+                </div>
+            </div>
+            
+            <div class="compare-row">
+                <span class="compare-label">Pantoprazole 40mg (Acidity)</span>
+                <div>
+                    <span class="compare-val cross">₹140.00</span>
+                    <span class="compare-val save">₹28.00 (Save 80%)</span>
+                </div>
+            </div>
+            
+            <div class="compare-row">
+                <span class="compare-label">Metformin 500mg (Diabetes)</span>
+                <div>
+                    <span class="compare-val cross">₹120.00</span>
+                    <span class="compare-val save">₹24.00 (Save 80%)</span>
+                </div>
+            </div>
+            
+            <div class="compare-row">
+                <span class="compare-label">Paracetamol 650mg (Fever)</span>
+                <div>
+                    <span class="compare-val cross">₹40.00</span>
+                    <span class="compare-val save">₹12.50 (Save 68%)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Value Propositions -->
+<section class="container" style="margin-bottom: 4rem;">
+    <div class="section-title-wrapper">
+        <h2>Why Choose Jan Aushadhi?</h2>
+        <p>Providing safe, effective, and extremely pocket-friendly healthcare to every citizen in India.</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3>WHO-GMP Quality</h3>
+            <p>Every batch of medicine is sourced from WHO-GMP compliant facilities and verified by NABL labs to meet global medical quality parameters.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+            <h3>Massive Savings</h3>
+            <p>Our medicines are priced 50% to 90% cheaper than their branded counterparts, bringing healthcare within reach of everyone.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fa-solid fa-truck-droplet"></i>
+            </div>
+            <h3>Wide Distribution</h3>
+            <p>With thousands of Kendras nationwide and robust supply channels, find chronic and acute care drugs wherever you need them.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Shop By Category -->
+<section class="container" style="margin-bottom: 5rem;">
+    <div class="section-title-wrapper">
+        <h2>Shop By Category</h2>
+        <p>Filter through our wide selection of generic alternatives for health conditions.</p>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;" class="responsive-category-grid">
+        <a href="/catalog?category=Pain Relief" class="feature-card" style="padding: 2rem 1.5rem;">
+            <div class="feature-icon" style="font-size: 1.5rem; width: 50px; height: 50px; margin-bottom: 1rem;"><i class="fa-solid fa-hand-holding-medical"></i></div>
+            <h4>Pain Relief</h4>
+        </a>
+        <a href="/catalog?category=Diabetes" class="feature-card" style="padding: 2rem 1.5rem;">
+            <div class="feature-icon" style="font-size: 1.5rem; width: 50px; height: 50px; margin-bottom: 1rem;"><i class="fa-solid fa-droplet"></i></div>
+            <h4>Diabetes</h4>
+        </a>
+        <a href="/catalog?category=Antibiotics" class="feature-card" style="padding: 2rem 1.5rem;">
+            <div class="feature-icon" style="font-size: 1.5rem; width: 50px; height: 50px; margin-bottom: 1rem;"><i class="fa-solid fa-capsules"></i></div>
+            <h4>Antibiotics</h4>
+        </a>
+        <a href="/catalog?category=Heart Health" class="feature-card" style="padding: 2rem 1.5rem;">
+            <div class="feature-icon" style="font-size: 1.5rem; width: 50px; height: 50px; margin-bottom: 1rem;"><i class="fa-solid fa-heart-pulse"></i></div>
+            <h4>Heart Health</h4>
+        </a>
+    </div>
+</section>
+
+<!-- Health Tips -->
+<section class="container" style="margin-bottom: 5rem;">
+    <div class="section-title-wrapper">
+        <h2>Daily Health & Wellness</h2>
+        <p>Useful insights from our medical board to maintain a healthy lifestyle.</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card" style="text-align: left; padding: 0; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=400&auto=format&fit=crop" alt="Yoga & Wellness" style="height: 180px; width: 100%; object-fit: cover;">
+            <div style="padding: 1.5rem;">
+                <span style="font-size: 0.75rem; color: var(--primary-teal); font-weight: 700; text-transform: uppercase;">Exercise</span>
+                <h3 style="font-size: 1.2rem; margin: 0.5rem 0;">Importance of Daily Stretching</h3>
+                <p>Learn how simple 10-minute morning stretching routines can alleviate back pain and improve joint mobility significantly.</p>
+            </div>
+        </div>
+        
+        <div class="feature-card" style="text-align: left; padding: 0; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=400&auto=format&fit=crop" alt="Diet Planning" style="height: 180px; width: 100%; object-fit: cover;">
+            <div style="padding: 1.5rem;">
+                <span style="font-size: 0.75rem; color: var(--primary-teal); font-weight: 700; text-transform: uppercase;">Nutrition</span>
+                <h3 style="font-size: 1.2rem; margin: 0.5rem 0;">A Balanced Indian Diabetic Diet</h3>
+                <p>Essential meal plans focusing on low glycemic index grains like oats, ragi, and fiber-rich greens to manage daily sugar levels.</p>
+            </div>
+        </div>
+        
+        <div class="feature-card" style="text-align: left; padding: 0; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1577401239170-897942555fb3?q=80&w=400&auto=format&fit=crop" alt="Generic Medicine Guidance" style="height: 180px; width: 100%; object-fit: cover;">
+            <div style="padding: 1.5rem;">
+                <span style="font-size: 0.75rem; color: var(--primary-teal); font-weight: 700; text-transform: uppercase;">Safety</span>
+                <h3 style="font-size: 1.2rem; margin: 0.5rem 0;">Reading Generic Formulations</h3>
+                <p>A quick guide on how to locate the active chemical drug composition printed on prescription boxes to identify generic variants.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mobile responsive category grid fallback styles override -->
+<style>
+@media (max-width: 768px) {
+    .responsive-category-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+@media (max-width: 480px) {
+    .responsive-category-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>
+{% endblock %}

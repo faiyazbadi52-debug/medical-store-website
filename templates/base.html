@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jan Aushadhi Pharmacy Portal{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar Header -->
+    <header class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="logo">
+                <!-- SVG Icon representing a professional Jan Aushadhi rounded square cross logo -->
+                <svg class="logo-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="24" rx="6" fill="#003e8a"/>
+                    <path d="M12 6V18" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M6 12H18" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                    <circle cx="16" cy="8" r="2.5" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+                </svg>
+                <span>Jan Aushadhi Kendra</span>
+            </a>
+            
+            <button class="burger-menu" id="burger-menu-btn" aria-label="Toggle Navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <nav class="nav-links" id="nav-links-menu">
+                <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+                <a href="/catalog" class="nav-link {% if request.path == '/catalog' and not request.args.get('category') %}active{% endif %}">Medicines</a>
+                <a href="/catalog?category=Pain%20Relief" class="nav-link {% if request.args.get('category') %}active{% endif %}">Categories</a>
+                <a href="/track" class="nav-link {% if request.path == '/track' %}active{% endif %}">Orders</a>
+                <a href="/contact" class="nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
+                {% if session.get('user_role') == 'admin' %}
+                    <a href="/admin" class="nav-link {% if request.path == '/admin' %}active{% endif %}" style="color: var(--accent-green-text); font-weight: 700;">Admin Dashboard</a>
+                {% endif %}
+            </nav>
+            
+            <div class="nav-actions">
+                <a href="/cart" class="cart-icon-btn" title="View Cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count" id="cart-badge-count">0</span>
+                </a>
+                
+                {% if session.get('user_id') %}
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="user-greeting" style="font-size: 0.85rem; font-weight: 500; color: var(--text-muted);">
+                            <i class="fa-solid fa-circle-user"></i> {{ session.get('user_name', 'User').split()[0] }}
+                        </span>
+                        <a href="/logout" class="btn-logout" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Logout</a>
+                    </div>
+                {% else %}
+                    <a href="/login" class="btn-login">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Toast Notifications Area -->
+    <div id="toast-container"></div>
+
+    <!-- Main Content Grid -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer Area -->
+    <footer>
+        <div class="container footer-grid">
+            <div>
+                <div class="footer-logo">
+                    <!-- SVG Icon representing a professional Jan Aushadhi rounded square cross logo -->
+                    <svg class="logo-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="24" rx="6" fill="#003e8a"/>
+                        <path d="M12 6V18" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                        <path d="M6 12H18" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                        <circle cx="16" cy="8" r="2.5" fill="#16a34a" stroke="#ffffff" stroke-width="1"/>
+                    </svg>
+                    <span>Jan Aushadhi Kendra</span>
+                </div>
+                <p style="margin-bottom: 1.5rem; line-height: 1.6; font-size: 0.85rem;">Pradhan Mantri Bhartiya Janaushadhi Pariyojana (PMBJP) is a campaign launched by the Department of Pharmaceuticals, Govt. of India, to provide quality medicines at affordable prices.</p>
+            </div>
+            
+            <div>
+                <h3 class="footer-heading">Platform</h3>
+                <ul class="footer-links" style="font-size: 0.85rem;">
+                    <li><a href="/catalog">Medicine Search</a></li>
+                    <li><a href="/track">Track Orders</a></li>
+                    <li><a href="/contact">Find Store</a></li>
+                    <li><a href="/contact">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="footer-heading">Legal</h3>
+                <ul class="footer-links" style="font-size: 0.85rem;">
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="footer-heading">Contact Us</h3>
+                <div style="font-size: 0.85rem; line-height: 1.6;">
+                    <p style="margin-bottom: 5px;">Toll Free: 1800-180-8080</p>
+                    <p>Email: helpdesk-pmbi@gov.in</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container footer-bottom">
+            <p>&copy; 2026 PMBJP Jan Aushadhi Kendra. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Set cart count from server session at template render
+        document.getElementById('cart-badge-count').textContent = '{{ session.get("cart_count", 0) }}';
+    </script>
+</body>
+</html>
