@@ -1111,3 +1111,52 @@ footer {
   .checkout-layout { grid-template-columns: 1fr; }
   .tracking-details-layout { grid-template-columns: 1fr; }
 }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f7fb;
+}
+
+.navbar {
+  background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #36d1dc, #5b86e5);
+  border: none;
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+}
+
+<style>
+.modern-search {
+    display: flex;
+    background: white;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modern-search input {
+    border: none;
+    padding: 12px;
+    flex: 1;
+    outline: none;
+}
+
+.modern-search button {
+    background: #36d1dc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+}
+</style>
